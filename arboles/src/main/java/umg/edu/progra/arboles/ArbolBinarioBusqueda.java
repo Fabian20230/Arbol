@@ -302,10 +302,181 @@ public class ArbolBinarioBusqueda {
         imprimirArbolRecursivo(nodo.izquierdo, nivel + 1);
     }
 
-    // ============================================================
-    // COLA INTERNA (lista enlazada simple) usada para BFS.
-    // Se implementa aqui para NO depender de java.util.
-    // ============================================================
+    // PROBLEMA 1 — contarNodos recursivo
+  
+    public int contarNodos() {
+        return contarNodosRecursivo(raiz);
+    }
+
+    private int contarNodosRecursivo(Nodo nodo) {
+        if (nodo == null) {
+            return 0;
+        }
+        return 1 + contarNodosRecursivo(nodo.izquierdo) + contarNodosRecursivo(nodo.derecho);
+    }
+
+    // PROBLEMA 2 — esBalanceado
+
+  public boolean esBalanceado() {
+        return alturaBalanceada(raiz) != -2;
+    }
+
+   private int alturaBalanceada(Nodo nodo) {
+        if (nodo == null) {
+            return -1;
+        }
+         int alturaIzq = alturaBalanceada(nodo.izquierdo);
+        if (alturaIzq == -2) {
+            return -2; 
+        }
+        int alturaDer = alturaBalanceada(nodo.derecho);
+        if (alturaDer == -2) {
+            return -2; 
+        }
+        int diferencia = alturaIzq - alturaDer;
+        if (diferencia < -1 || diferencia > 1) {
+            return -2; 
+        }
+        return 1 + (alturaIzq > alturaDer ? alturaIzq : alturaDer);
+    }
+
+    // PROBLEMA 3 — esBSTValido
+
+       public boolean esBSTValido() {
+        return esBSTValidoRecursivo(raiz, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+     private boolean esBSTValidoRecursivo(Nodo nodo, int min, int max) {
+         if (nodo == null) {
+            return true;
+        }
+        if (nodo.dato <= min || nodo.dato >= max) {
+            return false;
+        }
+        return esBSTValidoRecursivo(nodo.izquierdo, min, nodo.dato)
+            && esBSTValidoRecursivo(nodo.derecho, nodo.dato, max);
+    }
+
+     // PROBLEMA 4 — ancestroComunMasBajo
+    
+    public int ancestroComunMasBajo(int a, int b) {
+        if (!contiene(a)) {
+            throw new IllegalArgumentException("El valor " + a + " no existe en el arbol");
+        }
+        if (!contiene(b)) {
+            throw new IllegalArgumentException("El valor " + b + " no existe en el arbol");
+        }
+        return lcaRecursivo(raiz, a, b);
+    }
+
+    private int lcaRecursivo(Nodo nodo, int a, int b) {
+        if (a < nodo.dato && b < nodo.dato) {
+            return lcaRecursivo(nodo.izquierdo, a, b);
+        }
+         if (a > nodo.dato && b > nodo.dato) {
+            return lcaRecursivo(nodo.derecho, a, b);
+        }
+       
+        return nodo.dato;
+    }
+
+    // PROBLEMA 5 — invertir (espejo del arbol)
+   
+    public void invertir() {
+        invertirRecursivo(raiz);
+    }
+
+    private void invertirRecursivo(Nodo nodo) {
+  
+        if (nodo == null) {
+            return;
+        }
+        
+        Nodo temporal = nodo.izquierdo;
+        nodo.izquierdo = nodo.derecho;
+        nodo.derecho = temporal;
+        invertirRecursivo(nodo.izquierdo);
+        invertirRecursivo(nodo.derecho);
+    }
+
+    // EXTRA E1 — kEsimoMenor
+    
+    public int kEsimoMenor(int k) {
+        if (k <= 0 || k > tamanio) {
+            throw new IllegalArgumentException(
+                "k=" + k + " fuera de rango. El arbol tiene " + tamanio + " nodo(s).");
+        }
+        int[] contador = {0};      
+        int[] resultado = {Integer.MIN_VALUE}; 
+        kEsimoRecursivo(raiz, k, contador, resultado);
+        return resultado[0];
+    }
+
+    private void kEsimoRecursivo(Nodo nodo, int k, int[] contador, int[] resultado) {
+        if (nodo == null || contador[0] >= k) {
+            return;
+        }
+
+        kEsimoRecursivo(nodo.izquierdo, k, contador, resultado);
+        contador[0]++;
+        if (contador[0] == k) {
+            resultado[0] = nodo.dato;
+            return;
+        }
+
+        kEsimoRecursivo(nodo.derecho, k, contador, resultado);
+    }
+
+    // EXTRA — imprimirRangoOrdenado
+    
+    public void imprimirRangoOrdenado(int min, int max) {
+        imprimirRangoRecursivo(raiz, min, max);
+        System.out.println();
+    }
+
+    private void imprimirRangoRecursivo(Nodo nodo, int min, int max) {
+        if (nodo == null) {
+            return;
+        }
+        
+        if (nodo.dato > min) {
+            imprimirRangoRecursivo(nodo.izquierdo, min, max);
+        }
+    
+        if (nodo.dato >= min && nodo.dato <= max) {
+            System.out.print(nodo.dato + " ");
+        }
+        
+        if (nodo.dato < max) {
+            imprimirRangoRecursivo(nodo.derecho, min, max);
+        }
+    }
+
+    // EXTRA — diametro
+
+    public int diametro() {
+        if (raiz == null) {
+            return 0;
+        }
+        int[] maxDiametro = {0};
+        diametroRecursivo(raiz, maxDiametro);
+        return maxDiametro[0];
+    }
+
+    private int diametroRecursivo(Nodo nodo, int[] maxDiametro) {
+        if (nodo == null) {
+            return -1;
+        }
+        int altIzq = diametroRecursivo(nodo.izquierdo, maxDiametro);
+        int altDer = diametroRecursivo(nodo.derecho, maxDiametro);
+
+        int diametroActual = altIzq + altDer + 2;
+        if (diametroActual > maxDiametro[0]) {
+            maxDiametro[0] = diametroActual;
+        }
+        // Devolvemos la altura de subarbol
+        return 1 + (altIzq > altDer ? altIzq : altDer);
+    }
 
     private static class NodoCola {
         Nodo valor;

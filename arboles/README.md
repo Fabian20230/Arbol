@@ -208,3 +208,101 @@ Solo cuentan si los 5 problemas anteriores están correctos.
 ---
 
 > "Un BST bien implementado es más rápido que muchas estructuras prediseñadas… si entienden el porqué."
+
+
+## Cómo compilar y ejecutar
+
+Desde la carpeta `arboles/`:
+
+```bash
+mvn compile
+java -cp target/classes umg.edu.progra.arboles.Principal
+```
+
+O abrir como proyecto Maven en Eclipse y ejecutar la clase `Principal`.
+
+---
+
+## Qué hace cada método nuevo
+
+**`contarNodos()`** — Cuenta el total de nodos del árbol usando recursión pura, sin usar el campo interno `tamanio`. Pregunta a cada subárbol cuántos nodos tiene y suma 1 por el nodo actual.
+
+**`esBalanceado()`** — Verifica que en cada nodo la diferencia de altura entre su subárbol izquierdo y derecho sea menor o igual a 1. Si encuentra un desbalance en cualquier nodo, detiene la revisión inmediatamente.
+
+**`esBSTValido()`** — Valida que el árbol cumple la propiedad BST en todos sus nodos. Cada nodo recibe un rango permitido `(min, max)` y verifica que su valor esté estrictamente dentro de él antes de seguir hacia sus hijos.
+
+**`ancestroComunMasBajo(int a, int b)`** — Devuelve el dato del ancestro común más bajo de dos valores aprovechando la propiedad del BST: si ambos valores son menores que el nodo actual baja a la izquierda, si ambos son mayores baja a la derecha, en cualquier otro caso el nodo actual es el LCA. Lanza `IllegalArgumentException` si alguno de los valores no existe en el árbol.
+
+**`invertir()`** — Produce el espejo del árbol intercambiando el hijo izquierdo y derecho de cada nodo de forma recursiva. Tras invertir, el recorrido inOrden pasa de ascendente a descendente.
+
+---
+
+## Ejemplos de entrada y salida
+
+**Problema 1 — `contarNodos()`**
+
+```
+Árbol: {50, 30, 70, 20, 40, 60, 80, 10}
+tamanio()     → 8
+contarNodos() → 8
+¿Coinciden?   → true
+```
+
+**Problema 2 — `esBalanceado()`**
+
+```
+Árbol {50, 30, 70, 20, 40, 60, 80, 10} → true
+Árbol {1, 2, 3, 4, 5} (cadena derecha) → false
+```
+
+**Problema 3 — `esBSTValido()`**
+
+```
+Árbol generado con insertar()      → true
+Árbol con 80 a la izquierda de 50  → false
+```
+
+**Problema 4 — `ancestroComunMasBajo()`**
+
+```
+Árbol: {50, 30, 70, 20, 40, 60, 80, 10}
+LCA(10, 40) → 30
+LCA(10, 80) → 50
+LCA(60, 80) → 70
+```
+
+**Problema 5 — `invertir()`**
+
+```
+InOrden antes:   10 20 30 40 50 60 70 80
+InOrden después: 80 70 60 50 40 30 20 10
+```
+
+## Ejemplos de entrada y salida (extras)
+
+**E1 — `kEsimoMenor(int k)`**
+
+```
+Árbol: {50, 30, 70, 20, 40, 60, 80, 10}
+kEsimoMenor(1) → 10
+kEsimoMenor(3) → 30
+kEsimoMenor(8) → 80
+```
+
+**E2 — `imprimirRangoOrdenado(int min, int max)`**
+
+```
+imprimirRangoOrdenado(20, 60) → 20 30 40 50 60
+imprimirRangoOrdenado(35, 55) → 40 50
+```
+
+**E3 — `diametro()`**
+
+```
+Árbol: {50, 30, 70, 20, 40, 60, 80, 10}
+diametro() → 6
+
+Árbol con un solo nodo:
+diametro() → 0
+```
+
